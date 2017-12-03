@@ -32,7 +32,9 @@ The application should be able to perform as below specifications
 Use below overrides to specify the paths. The values shown are defaults.
 
 > ka.details.urlsFilePath=d:\\kannada-audio\\urls.txt
+> 
 > ka.details.urlErrorsFileName=error-urls.txt
+> 
 > ka.details.baseDownloadDirPath=d:\\kannada-audio
 
 
