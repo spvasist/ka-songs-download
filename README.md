@@ -38,5 +38,13 @@ Use below overrides to specify the paths. The values shown are defaults.
 > 
 > ka.details.baseDownloadDirPath=d:\\kannada-audio
 
+## Currently Working
+**All the funtional requirements are fulfilled. The application is fully functional as per requirements specification.**
+
+## Scope for improvement
+- Implement parallel downloads
+- Auto discover album urls
+- Introduce modularity in design
+- Improve test coverage
 
 
