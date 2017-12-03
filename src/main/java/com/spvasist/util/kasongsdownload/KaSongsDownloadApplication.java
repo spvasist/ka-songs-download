@@ -22,6 +22,7 @@ public class KaSongsDownloadApplication {
             urls = FileUtils.readLines(new File(urlListPath), "UTF-8");
             for (String url : urls) {
                 if (!Album.saveAlbum(url, baseDownloadPath)) {
+                    //Save the error urls
                     FileUtils.write(Paths.get(baseDownloadPath, errorFile).toFile(), url, "UTF-8", true);
                 }
             }
