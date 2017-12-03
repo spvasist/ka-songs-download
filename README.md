@@ -1,7 +1,7 @@
 # Download songs from kannadaaudio.com
 ## Introduction
 This is a private project to develop a Java based application to download songs from 
-kannadaaudio.com website. This website contains a lot of audio content from famous artists.
+kannadaaudio.com website. This website contains a lot of audio content, albums from famous artists.
 It is next to impossible to download all the song manually. Hence the project. 
 
 This application downloads all the songs and image in all the album urls specified into 
@@ -43,6 +43,7 @@ Use below overrides to specify the paths. The values shown are defaults.
 
 ## Scope for improvement
 - Implement parallel downloads
+- Continue from where it left after restart.
 - Auto discover album urls
 - Introduce modularity in design
 - Improve test coverage
