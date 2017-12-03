@@ -1,6 +1,5 @@
 package com.spvasist.util.kasongsdownload;
 
-
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -8,8 +7,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -62,7 +59,7 @@ public class Album {
                 try {
                     String relativeUrl = tailNodes.get(1).getElementsByTag("img").attr("src");
                     if (!StringUtils.isEmpty(relativeUrl))
-                        this.imageUrl = finalUrl(albumUrl, relativeUrl);
+                        this.imageUrl = finalUrl(relativeUrl);
                 } catch (Exception ex) {
                     //Skip and move
                 }
@@ -78,7 +75,7 @@ public class Album {
                 */
                 this.songToUrlMap = new HashMap<>();
                 for (Element songElement : songs) {
-                    URL url = getRmUrlFromRamUrl(finalUrl(albumUrl, songElement.attr("href")));
+                    URL url = getRmUrlFromRamUrl(finalUrl(songElement.attr("href")));
                     String songTitle = songElement.text();
                     this.songToUrlMap.put(songTitle, url);
                 }
@@ -117,9 +114,8 @@ public class Album {
         return true;
     }
 
-    private String finalUrl(String baseUrl, String relativeUrl) {
-        URI url = URI.create(baseUrl);
-        return url.resolve(relativeUrl).toString();
+    private String finalUrl(String relativeUrl) {
+        return URI.create(albumUrl).resolve(relativeUrl).toString();
     }
 
     private URL getRmUrlFromRamUrl(String ramUrl) {
