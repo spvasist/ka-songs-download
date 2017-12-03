@@ -8,6 +8,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -25,28 +27,26 @@ public class Album {
     private String title;
     private Map<String, URL> songToUrlMap;
 
-    /**
-     * @param albumUrl Url of the album
-     * @param dirPath  Base path to save the downloaded files.
-     *                 Will be created if not found.
-     *                 Separate directories will be created for each album.
-     * @return Returns true if entire album save was successful.
-     */
-    static boolean saveAlbum(String albumUrl, String dirPath) {
-        //Phase - 1. Parse the web page and get all the song urls.
-        Album album = getAlbumObjectFromWebPage(albumUrl);
-        if (album == null)
-            return false;
-        //Phase - 2. Download the files to disk.
-        if (!downloadRmFiles(album, dirPath))
-            return false;
-        return true;
+    private final ApplicationProperties appConfig;
+
+    public Album(ApplicationProperties appConfig, String albumUrl) {
+        this.appConfig = appConfig;
+        this.albumUrl = albumUrl;
     }
 
-    private static Album getAlbumObjectFromWebPage(String albumUrl) {
+    /**
+     * @return Returns true if entire album save was successful.
+     */
+    boolean saveAlbum() {
+        //Phase - 1. Parse the web page and get all the song urls.
+        if (!getAlbumObjectFromWebPage(albumUrl))
+            return false;
+        //Phase - 2. Download songs and images.
+        return downloadRmFiles();
+    }
+
+    private boolean getAlbumObjectFromWebPage(String albumUrl) {
         try {
-            Album album = new Album();
-            album.albumUrl = albumUrl;
             //Download the web page with album details.
             Document doc = Jsoup.connect(albumUrl).get();
             /*
@@ -62,11 +62,12 @@ public class Album {
                 try {
                     String relativeUrl = tailNodes.get(1).getElementsByTag("img").attr("src");
                     if (!StringUtils.isEmpty(relativeUrl))
-                        album.imageUrl = finalUrl(albumUrl, relativeUrl);
+                        this.imageUrl = finalUrl(albumUrl, relativeUrl);
                 } catch (Exception ex) {
+                    //Skip and move
                 }
                 //Scrap to get album title
-                album.title = tailNodes.get(0).getElementsByTag("strong").text();
+                this.title = tailNodes.get(0).getElementsByTag("strong").text();
                 Elements songs = tailNodes.get(1)
                         .getElementsByTag("a");
                 //Remove the last link which is link to all songs.
@@ -75,39 +76,39 @@ public class Album {
                 Each link will point to a .ram file which contains the link to actual .rm files.
                 Read the link from .ram and then obtain the actual .rm file link.
                 */
-                album.songToUrlMap = new HashMap<>();
+                this.songToUrlMap = new HashMap<>();
                 for (Element songElement : songs) {
                     URL url = getRmUrlFromRamUrl(finalUrl(albumUrl, songElement.attr("href")));
                     String songTitle = songElement.text();
-                    album.songToUrlMap.put(songTitle, url);
+                    this.songToUrlMap.put(songTitle, url);
                 }
             }
-            return album;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
-    private static boolean downloadRmFiles(Album album, String dirPath) {
+    private boolean downloadRmFiles() {
         try {
             //Create directories if not present
-            File file = Paths.get(dirPath, album.title).toFile();
+            File file = Paths.get(appConfig.getBaseDownloadDirPath(), this.title).toFile();
             if (!file.mkdirs() && !file.exists()) {
                 return false;
             }
             //Download image
-            if(!StringUtils.isEmpty(album.imageUrl)) {
-                FileUtils.copyURLToFile(new URL(album.imageUrl), Paths.get(file.toString(), "image.jpg").toFile()
+            if (!StringUtils.isEmpty(this.imageUrl)) {
+                FileUtils.copyURLToFile(new URL(this.imageUrl), Paths.get(file.toString(), "image.jpg").toFile()
                         , 30000
                         , 600000);
             }
             //Download files
-            for (Map.Entry<String, URL> entry : album.songToUrlMap.entrySet()) {
+            for (Map.Entry<String, URL> entry : this.songToUrlMap.entrySet()) {
                 FileUtils.copyURLToFile(entry.getValue()
                         , Paths.get(file.getPath(), entry.getKey() + ".rm").toFile()
-                ,30000
-                ,600000);
+                        , 30000
+                        , 600000);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,12 +117,12 @@ public class Album {
         return true;
     }
 
-    private static String finalUrl(String baseUrl, String relativeUrl) {
+    private String finalUrl(String baseUrl, String relativeUrl) {
         URI url = URI.create(baseUrl);
         return url.resolve(relativeUrl).toString();
     }
 
-    private static URL getRmUrlFromRamUrl(String ramUrl) {
+    private URL getRmUrlFromRamUrl(String ramUrl) {
         try {
             return new URL(IOUtils.toString(new URL(ramUrl), "UTF-8"));
         } catch (IOException e) {
