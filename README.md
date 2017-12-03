@@ -26,6 +26,7 @@ The application should be able to perform as below specifications
 ### Non-functional specifications
 - It can use all the network, memory and CPU to process.
 - Downloads can be parallel.
+- It should be possible to continue form left over place when restarted
 
 
 ## Usage instructions
