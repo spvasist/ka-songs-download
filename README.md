@@ -1,7 +1,7 @@
-# Download songs from kannadaaudio.com
+# Download songs from an audio website
 ## Introduction
-This is a private project to develop a Java based application to download songs from 
-kannadaaudio.com website. This website contains a lot of audio content, albums from famous artists.
+This is a private project to develop a Java based application to download songs from an audio website. 
+This website contains a lot of audio content, albums from famous artists.
 It is next to impossible to download all the song manually. Hence the project. 
 
 This application downloads all the songs and image in all the album urls specified into 
@@ -12,7 +12,7 @@ Also this is an attempt to learn Java. I am happy that I could do this (my first
 ## Requirements
 ### Functional Specifications
 The application should be able to perform as below specifications
-- Take the list of urls of kannadaaudio.com song albums
+- Take the list of urls of song albums
 - A specific directory has to be created for each album with name same as album title
 - Download the all the .rm files of each album and save it to its specific directory
 - File names has to be same as song title in web page
@@ -32,11 +32,11 @@ The application should be able to perform as below specifications
 ## Usage instructions
 Use below overrides to specify the paths. The values shown are defaults.
 
-> ka.details.urlsFilePath=d:\\kannada-audio\\urls.txt
+> ka.details.urlsFilePath=d:\\audio\\urls.txt
 > 
 > ka.details.urlErrorsFileName=error-urls.txt
 > 
-> ka.details.baseDownloadDirPath=d:\\kannada-audio
+> ka.details.baseDownloadDirPath=d:\\audio
 
 ## Currently Working
 **All the funtional requirements are fulfilled. The application is fully functional as per requirements specification.**
