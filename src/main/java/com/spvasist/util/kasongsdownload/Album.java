@@ -47,7 +47,7 @@ public class Album {
             //Download the web page with album details.
             Document doc = Jsoup.connect(albumUrl).get();
             /*
-            Entire section is specific to kannadaaudio.com.
+            Entire section is specific to unnamed website (on purpose).
             Can be moved to parser module.
             */
             {
