@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>ka-songs-download</name>
-	<description>Download songs from kannadaaudio.com</description>
+	<description>Download songs from an audio website</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
